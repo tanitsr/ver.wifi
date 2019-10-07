@@ -13,9 +13,9 @@
 ### Online <br>
 - read SSID , Password from EEPROM
 - if no wifi start wifimanager 
- > 1. get config wifi page {show SSID , Password for config} <br>
- > 2. start AP to config <br>
- > 3. get wifi connect when config finish <br>
+ > -- get config wifi page {show SSID , Password for config} <br>
+ > -- start AP to config <br>
+ > -- get wifi connect when config finish <br>
 - if have wifimanager going !! 
 - get wifi connect when config finish
 - ID input by keypad + get ID data from firebase 
