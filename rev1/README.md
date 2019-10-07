@@ -5,12 +5,12 @@
 - setup wifimanager <br>
 - set delay <br>
 - calibration load call <br>
-## Function </b>
+## Function <br>
 - listen load cell get weight (while loop)<br>
 - if weight > 1 kg start system <br>
 - get welcome page<br>
 - get select mode page + function select mode<br>
-<b>Online</b> <br>
+### Online <br>
 - read SSID , Password from EEPROM
 - if no wifi start wifimanager {
  get config wifi page {show SSID , Password for config}
