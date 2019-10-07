@@ -6,11 +6,11 @@
 - set delay <br>
 - calibration load call <br>
 <b>Function</b>
-- listen load cell get weight (while loop)
-- if weight > 1 kg start system 
-- get welcome page
-- get select mode page + function select mode
-__Online__
+- listen load cell get weight (while loop)<br>
+- if weight > 1 kg start system <br>
+- get welcome page<br>
+- get select mode page + function select mode<br>
+<b>Online</b> <br>
 - read SSID , Password from EEPROM
 - if no wifi start wifimanager {
  get config wifi page {show SSID , Password for config}
