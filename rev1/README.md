@@ -19,7 +19,7 @@
 - if have wifimanager going !! 
 - get wifi connect when config finish
 - ID input by keypad + get ID data from firebase 
- > if input > ID : can't 
+ > if input > ID : can't <br>
  > if input != int : can't
 - get show detail page user
 - get show weight {3 time to success} + push weight to firebase 
