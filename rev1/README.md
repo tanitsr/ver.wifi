@@ -4,7 +4,7 @@
 - set W / R EEPROM <br>
 - setup wifimanager <br>
 - set delay <br>
-calibration load call <br>
+- calibration load call <br>
 <b>Function</b>
 - listen load cell get weight (while loop)
 - if weight > 1 kg start system 
