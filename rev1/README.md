@@ -13,31 +13,26 @@
 ### Online <br>
 - read SSID , Password from EEPROM
 - if no wifi start wifimanager 
- > -- get config wifi page {show SSID , Password for config} <br>
- > -- start AP to config <br>
- > -- get wifi connect when config finish <br>
+ > - get config wifi page {show SSID , Password for config} <br>
+ > - start AP to config <br>
+ > - get wifi connect when config finish <br>
 - if have wifimanager going !! 
 - get wifi connect when config finish
 - ID input by keypad + get ID data from firebase 
- > if input > ID : can't <br>
- > if input != int : can't
+ > - if input > ID : can't input and process <br>
+ > - if input != int : can't input process
 - get show detail page user
 - get show weight {3 time to success} + push weight to firebase 
- > no weight in 30 sec power off lcd and reset system
-- height with input by keypad + push to height firebase  \{if input > height (lock 
-\f1 hundred point
-\f0 ) : can\'92t , if input != int : can\'92t\}\
-- show results BMI with image  + push 
-\f1 BMI 
-\f0 to firebase \
-- in 30 sec reset system\
-__Offline__\
-- get show weight \{3 time to success\} + push weight to firebase (no weight in 30 sec power off lcd and reset system)\
-- height with input by keypad + push to height firebase  \{if input > height (lock 
-\f1 hundred point
-\f0 ) : can\'92t , if input != int : can\'92t\}\
-- show results BMI with image  + push 
-\f1 BMI 
-\f0 to firebase \
-- in 30 sec reset system\
- }
+ > - no weight in 30 sec power off lcd and reset system
+- height with input by keypad + push to height firebase  
+ > - if input > height (lock hundred point) : can't input and process 
+ > - if input != int : can't input and process
+- show results BMI with image  + push BMI to firebase 
+- in 30 sec reset system
+### Offline
+- get show weight \{3 time to success\} + push weight to firebase (no weight in 30 sec power off lcd and reset system)
+- height with input by keypad + push to height firebase  
+ > - if input > height (lock hundred point) : can't input and process 
+ > - if input != int : can't input and process
+- show results BMI with image  + push BMI to firebase 
+- in 30 sec reset system
