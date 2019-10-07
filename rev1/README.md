@@ -13,9 +13,9 @@
 ### Online <br>
 - read SSID , Password from EEPROM
 - if no wifi start wifimanager {
- get config wifi page {show SSID , Password for config}
- start AP to config
- get wifi connect when config finish
+ >get config wifi page {show SSID , Password for config}
+ >start AP to config
+ >get wifi connect when config finish
 }
 - if have wifimanager going !! \
 - get wifi connect when config finish\
