@@ -1,10 +1,10 @@
 # **Check Point**
 <b>Setup</b> <br>
-set all pin (load cell + lcd + delay + keypad)
-set W / R EEPROM
-setup wifimanager
-set delay 
-calibration load call
+- set all pin (load cell + lcd + delay + keypad) <br>
+- set W / R EEPROM <br>
+- setup wifimanager <br>
+- set delay <br>
+calibration load call <br>
 <b>Function</b>
 - listen load cell get weight (while loop)
 - if weight > 1 kg start system 
