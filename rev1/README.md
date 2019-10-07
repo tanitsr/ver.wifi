@@ -16,11 +16,14 @@
  > 1. get config wifi page {show SSID , Password for config} <br>
  > 2. start AP to config <br>
  > 3. get wifi connect when config finish <br>
-- if have wifimanager going !! \
-- get wifi connect when config finish\
-- ID input by keypad + get ID data from firebase \{if input > ID : can\'92t , if input != int : can\'92t\}\
-- get show detail page user\
-- get show weight \{3 time to success\} + push weight to firebase (no weight in 30 sec power off lcd and reset system)\
+- if have wifimanager going !! 
+- get wifi connect when config finish
+- ID input by keypad + get ID data from firebase 
+ > if input > ID : can't 
+ > if input != int : can't
+- get show detail page user
+- get show weight {3 time to success} + push weight to firebase 
+ > no weight in 30 sec power off lcd and reset system
 - height with input by keypad + push to height firebase  \{if input > height (lock 
 \f1 hundred point
 \f0 ) : can\'92t , if input != int : can\'92t\}\
