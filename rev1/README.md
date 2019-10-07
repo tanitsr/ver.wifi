@@ -1,22 +1,22 @@
 # **Check Point**
-__Setup__\
-- set all pin (load cell + lcd + delay + keypad)\
-- set W / R EEPROM\
-- setup wifimanager\
-- set delay \
-- calibration load call\
-__Function__\
-- listen load cell get weight (while loop)\
-- if weight > 1 kg start system \
-- get welcome page\
-- get select mode page + function select mode\
-__Online__\
-- read SSID , Password from EEPROM\
-- if no wifi start wifimanager \{\
-- get config wifi page \{show SSID , Password for config\}\
-- start AP to config\
-- get wifi connect when config finish\
-\}\
+__Setup__
+- set all pin (load cell + lcd + delay + keypad)
+- set W / R EEPROM
+- setup wifimanager
+- set delay 
+- calibration load call
+__Function__
+- listen load cell get weight (while loop)
+- if weight > 1 kg start system 
+- get welcome page
+- get select mode page + function select mode
+__Online__
+- read SSID , Password from EEPROM
+- if no wifi start wifimanager {
+ get config wifi page {show SSID , Password for config}
+ start AP to config
+ get wifi connect when config finish
+}
 - if have wifimanager going !! \
 - get wifi connect when config finish\
 - ID input by keypad + get ID data from firebase \{if input > ID : can\'92t , if input != int : can\'92t\}\
