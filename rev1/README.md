@@ -12,11 +12,10 @@
 - get select mode page + function select mode<br>
 ### Online <br>
 - read SSID , Password from EEPROM
-- if no wifi start wifimanager {
- >get config wifi page {show SSID , Password for config}
- >start AP to config
- >get wifi connect when config finish
-}
+- if no wifi start wifimanager 
+ >get config wifi page {show SSID , Password for config} <br>
+ >start AP to config <br>
+ >get wifi connect when config finish <br>
 - if have wifimanager going !! \
 - get wifi connect when config finish\
 - ID input by keypad + get ID data from firebase \{if input > ID : can\'92t , if input != int : can\'92t\}\
