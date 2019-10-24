@@ -1,4 +1,4 @@
-# **Check Point [with edit]**
+# **Check Point [wait edit]**
 ## Setup <br>
 - set all pin (load cell + lcd + delay + keypad) <br>
 - set W / R EEPROM <br>
