@@ -5,7 +5,7 @@
 #include "FirebaseESP32.h"
 #include "HX711.h"
 #include <EEPROM.h>
-
+#include "time.h"
 ////ntp_define///
 #define TIMEZONE 7
 
@@ -317,6 +317,7 @@ static const uint8_t PROGMEM obese[] =
 ///firebase_define//////
 #define FIREBASE_HOST "https://test-mainproject-2df90.firebaseio.com" //Do not include https:// in FIREBASE_HOST
 #define FIREBASE_AUTH "6LrHrZjSkYt9CXYEDIPbk6e8nHmpDIQ9rbSuynZ6"
+FirebaseJson json;
 
 ////////hx711_define//////////
 #define DOUT  21  
@@ -350,12 +351,15 @@ String read_wifi_name = "";
 String read_wifi_pass = "";
 String wifi_name = "";
 String wifi_pass = "";
+struct tm timeinfo;
+
 
 String convertFloatToString(float f)
 {
   String s = String(f,1);
   return s;
 }
+
 
 void writeUsertoEEPROM()
 {
@@ -603,29 +607,25 @@ void display_getuser()
 {
   Serial.print("phonenum : ");
   Serial.println(phonenum); 
-  String path_to_name = "/User/"+phonenum+"/name";
-  String path_to_age = "/User/"+phonenum+"/age";
-  String uname ="";
-  String uage ="";
+  String path = "/User/"+phonenum;
   FirebaseData firebaseData;
   Firebase.begin(FIREBASE_HOST, FIREBASE_AUTH); 
   Firebase.reconnectWiFi(true);
-  if (Firebase.getString(firebaseData, path_to_name)) {
-    if (firebaseData.dataType() == "string") {
-      uname = firebaseData.stringData();
-      Serial.println(uname);      
-    }
-  } else {
-    Serial.println(firebaseData.errorReason());
-  } 
- if (Firebase.getInt(firebaseData, path_to_age)) {
-    if (firebaseData.dataType() == "int") {
-      uage = String(firebaseData.intData());  
-      Serial.println(uage);          
-    }
-  } else {
-    Serial.println(firebaseData.errorReason());
-  }
+  Firebase.getString(firebaseData, path+"/name");
+  String uname = firebaseData.stringData();
+  Firebase.getInt(firebaseData, path+"/age");
+  Serial.println(uname);
+  String uage = String(firebaseData.intData()); 
+  Firebase.getFloat(firebaseData, path+"/l_weight");
+  Serial.println(uage);
+  String l_weight = convertFloatToString(firebaseData.floatData());
+  Serial.println(l_weight);
+  Firebase.getFloat(firebaseData, path+"/l_height");
+  String l_height = convertFloatToString(firebaseData.floatData());
+  Serial.println(l_height);
+  Firebase.getFloat(firebaseData, path+"/l_bmi");
+  String l_bmi = convertFloatToString(firebaseData.floatData());
+  Serial.println(l_bmi);
  if(uname != "" && uage != "")
  {
   tft.fillCircle(210, 5, 5, COLOR_GREEN);
@@ -633,30 +633,52 @@ void display_getuser()
   tft.drawText(164, 1, "Online");   
   tft.setFont(Terminal11x16);
   tft.drawBitmap(20, 50, get_user, 60, 57,COLOR_WHITE);
-  tft.drawText(100, 65, "Name :");
-  tft.drawText(100, 95, "Age :");
-  tft.drawText(160, 65, uname);
-  tft.drawText(160, 95, uage);
+  tft.drawText(100, 30, "Name :");
+  tft.drawText(100, 60, "Age :");
+  tft.drawText(160, 30, uname);
+  tft.drawText(160, 60, uage);
+  tft.drawText(160, 90, l_weight);
+  tft.drawText(160, 120, l_height);
+  tft.drawText(160, 150, l_bmi);
   delay(8000);
   return;   
  }
 }
 
-void put_tofirebase()
+void put_tofirebase(String sw , int sh , float sb)
 {
   FirebaseData firebaseData;
   Firebase.begin(FIREBASE_HOST, FIREBASE_AUTH); 
-  Firebase.reconnectWiFi(true);   
-  String path_to_weight = "/History/"+phonenum;
-   if (Firebase.pushInt(firebaseData, path_to_weight , sent_wei))
+  Firebase.reconnectWiFi(true);
+  bool goNext = false;
+  json.clear().addDouble("weight",sw.toFloat()).addDouble("height",sh).addDouble("bmi",sb);
+  String path_history = "/History/"+phonenum+"/";
+  String path_realtime = "/User/"+phonenum;
+  getLocalTime(&timeinfo);
+  String timeStamp = +"/"+String(timeinfo.tm_year+1900) +"-"
+  + String(timeinfo.tm_mon) +"-"+ String(timeinfo.tm_mday) +"\'T\'"
+  + String(timeinfo.tm_hour) +":"+ String(timeinfo.tm_min) +":"+ String(timeinfo.tm_sec); 
+    if (Firebase.updateNode(firebaseData, path_history + timeStamp, json))
     {
-      if (firebaseData.dataType() == "float")
-        Serial.println(firebaseData.floatData(), 5);
-        phonenum = "";
-        return;
+      if (firebaseData.dataType() == "json")
+        Serial.println("Nice");
+        goNext = true;        
     }
-   
-}
+    else
+    {
+      Serial.println("FAILED");
+      Serial.println("REASON: " + firebaseData.errorReason());
+      Serial.println("------------------------------------");
+      Serial.println();
+    }
+    if(goNext == true){
+      Firebase.setFloat(firebaseData, path_realtime + "/l_weight", sw.toFloat());
+      Firebase.setFloat(firebaseData, path_realtime + "/l_height", sh);
+      Firebase.setFloat(firebaseData, path_realtime + "/l_bmi", sb);
+      Serial.println("SET!!");
+      return;
+    }   
+}    
 
 void display_showbmi(int sumshow,String strsum)
 {
@@ -733,7 +755,6 @@ void passtobmiShow(){
       float sum = 0.0;
       float hight_float = 0.0;
       String sum_ss;
-      sent_wei = weight; 
       display_status();
       Serial.print("hight  : ");
       Serial.println(hight);
@@ -752,7 +773,7 @@ void passtobmiShow(){
       display_showbmi(sum,sum_ss);
       if(sw_to == 1)
       {
-       put_tofirebase(); 
+       put_tofirebase(compareweight[0],hight.toInt(),sum); 
       }      
       for(int i = 0;i<30;i++){
         Serial.print("i : ");
@@ -763,6 +784,7 @@ void passtobmiShow(){
             count_loop = 0;
             count_time = 0;
             weight = 0.0; //set load cell
+            show = 33;
             return;
           }
         delay(1000);      
@@ -822,7 +844,13 @@ void display_weight()
   SWeight = convertFloatToString(weight);
   Serial.println("in_dwo");
   Serial.println(state);
-  if(weight >= 1 && weight < 10){ 
+  if(show == 33){
+     sw_to = 99;
+     select_mode = 0;
+     show = 0;
+     return;
+  }
+  else if(weight >= 1 && weight < 10){ 
     if(state == 1 || state == 2 || state == -1 ){
              tft.clear();
              state = 0;
@@ -839,7 +867,7 @@ void display_weight()
         tft.setFont(DSEG7_Modern53x72);
         tft.drawText(50, 50, SWeight);
         count_time = 0;           
-        for(;count_loop<4;count_loop++){
+        for(;count_loop<2;count_loop++){
           Serial.println("input weight");
           weight = scale.get_units();
           SWeight = convertFloatToString(weight);
@@ -864,7 +892,7 @@ void display_weight()
             break;
           }
         }
-        if(count_loop == 4){
+        if(count_loop == 2){
             state = 99;
             passtobmiShow();
         } 
@@ -886,7 +914,7 @@ void display_weight()
         tft.setFont(DSEG7_Modern53x72);        
         tft.drawText(5, 50, SWeight);
         count_time = 0;  
-          for(;count_loop<4;count_loop++){
+          for(;count_loop<2;count_loop++){
           Serial.println("input weight");  
           weight = scale.get_units();  
           SWeight = convertFloatToString(weight);
@@ -910,7 +938,7 @@ void display_weight()
             break;
           }
         }
-        if(count_loop == 4){
+        if(count_loop == 2){
             state = 99;
             passtobmiShow();
           }       
@@ -953,8 +981,7 @@ void display_weight()
           }
         }
         if(count_loop == 2){
-            state = 99;
-            
+            state = 99;            
             passtobmiShow();
           }                      
         }
@@ -999,7 +1026,7 @@ void setup() {
     vspi.begin();
     tft.begin(vspi);
     tft.setOrientation(3);   
-    scale.set_scale(-12878.72);  // Start scale
+    scale.set_scale(-12800.00);  // Start scale
     scale.tare();
     pinMode(relay_pin_vcc, OUTPUT);
     digitalWrite(relay_pin_vcc, LOW);
@@ -1015,7 +1042,7 @@ void loop() {
     weight = scale.get_units();  
     Serial.println(weight);
     Serial.println(led);
-    if(weight >= 1 && led == false){
+    if(weight > 10 && led == false && weight < 200){
       Serial.println("A");  
       weight = 0.0; //set load cell
       if(led == false){
