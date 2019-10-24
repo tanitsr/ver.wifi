@@ -1,5 +1,3 @@
-////with out load cell/////
-
 #include <WiFiManager.h> // https://github.com/tzapu/WiFiManager
 #include "SPI.h"
 #include "TFT_22_ILI9225.h"
@@ -7,6 +5,9 @@
 #include "FirebaseESP32.h"
 #include "HX711.h"
 #include <EEPROM.h>
+
+////ntp_define///
+#define TIMEZONE 7
 
 ////////ili9925_define//////////
 #define TFT_RST 17  // IO 26
@@ -646,8 +647,8 @@ void put_tofirebase()
   FirebaseData firebaseData;
   Firebase.begin(FIREBASE_HOST, FIREBASE_AUTH); 
   Firebase.reconnectWiFi(true);   
-  String path_to_weight = "/User/"+phonenum+"/weight";
-   if (Firebase.setInt(firebaseData, path_to_weight , sent_wei))
+  String path_to_weight = "/History/"+phonenum;
+   if (Firebase.pushInt(firebaseData, path_to_weight , sent_wei))
     {
       if (firebaseData.dataType() == "float")
         Serial.println(firebaseData.floatData(), 5);
@@ -667,7 +668,7 @@ void display_showbmi(int sumshow,String strsum)
     tft.drawBitmap(20, 40, under, 80, 90,COLOR_CYAN);   
     tft.drawText(35, 145, "Under");   
   }
-  else if(sumshow > 18.5 && sumshow <= 24.9)
+  else if(sumshow > 18.5 && sumshow <= 22.9)
   {
     tft.setFont(Terminal11x16);
     tft.drawText(140, 60, "BMI");
@@ -675,7 +676,7 @@ void display_showbmi(int sumshow,String strsum)
     tft.drawBitmap(20, 40, normal, 80, 90,COLOR_GREEN);   
     tft.drawText(30, 145, "Healthy");   
   }
-  else if(sumshow > 24.9 && sumshow <= 29.9)
+  else if(sumshow > 23 && sumshow <= 29.9)
   {
     tft.setFont(Terminal11x16);
     tft.drawText(140, 60, "BMI");
@@ -814,9 +815,10 @@ void display_status()
 
 void display_weight()
 {
+  ///not set compare < 100
  while(true){
   Serial.println("input weight");  
-  read_serial(); //scale.get_units();  
+  weight = scale.get_units();  
   SWeight = convertFloatToString(weight);
   Serial.println("in_dwo");
   Serial.println(state);
@@ -839,7 +841,7 @@ void display_weight()
         count_time = 0;           
         for(;count_loop<4;count_loop++){
           Serial.println("input weight");
-          read_serial();//scale.get_units();
+          weight = scale.get_units();
           SWeight = convertFloatToString(weight);
           compareweight[count_loop] = SWeight;
           Serial.print("In Compare : ");
@@ -886,7 +888,7 @@ void display_weight()
         count_time = 0;  
           for(;count_loop<4;count_loop++){
           Serial.println("input weight");  
-          read_serial(); //scale.get_units();  
+          weight = scale.get_units();  
           SWeight = convertFloatToString(weight);
           compareweight[count_loop] = SWeight;
           Serial.print("In Compare : ");
@@ -926,9 +928,9 @@ void display_weight()
         tft.setFont(DSEG7_Modern53x72);        
         tft.drawText(-35, 50, SWeight);
         count_time = 0;
-          for(;count_loop<4;count_loop++){
+          for(;count_loop<2;count_loop++){
           Serial.println("input weight");  
-          read_serial(); //scale.get_units();  
+          weight = scale.get_units();  
           SWeight = convertFloatToString(weight);
           compareweight[count_loop] = SWeight;
           Serial.print("In Compare : ");
@@ -950,7 +952,7 @@ void display_weight()
             break;
           }
         }
-        if(count_loop == 4){
+        if(count_loop == 2){
             state = 99;
             
             passtobmiShow();
@@ -971,7 +973,7 @@ void display_weight()
         for(int i = count_time;i<=30;i++){
                 count_time++;
                  Serial.println("input weight");  
-                 read_serial(); //scale.get_units();  
+                 weight = scale.get_units();  
                 if(weight >= 0.05){
                     count_time = 0;
                     break;
@@ -997,7 +999,7 @@ void setup() {
     vspi.begin();
     tft.begin(vspi);
     tft.setOrientation(3);   
-    scale.set_scale(-12750.97);  // Start scale
+    scale.set_scale(-12878.72);  // Start scale
     scale.tare();
     pinMode(relay_pin_vcc, OUTPUT);
     digitalWrite(relay_pin_vcc, LOW);
@@ -1005,11 +1007,12 @@ void setup() {
     readPasstoEEPROM();
     Serial.println(read_wifi_name);
     Serial.println(read_wifi_pass);
-    WiFi.begin(read_wifi_name.c_str(),read_wifi_pass.c_str()); 
+    WiFi.begin(read_wifi_name.c_str(),read_wifi_pass.c_str());
+    configTime(25200, 0, "ntp.ku.ac.th", "fw.eng.ku.ac.th", "time.uni.net.th"); 
 }
 void loop() {
     Serial.println("input weight_main_loop");  
-    read_serial(); //scale.get_units();  
+    weight = scale.get_units();  
     Serial.println(weight);
     Serial.println(led);
     if(weight >= 1 && led == false){
