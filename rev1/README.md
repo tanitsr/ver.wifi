@@ -12,8 +12,8 @@
 - get welcome page<br>
 - get select mode page + function select mode<br>
 - get payload Student ID form firebase<br>
-- set payload Student ID {weight , height , bmi} of firebase<br>
-- push json history payload {weight , height , bmi} with Etag timestamp (yyyy-mm-dd'T'hh:mm:ss)<br>
+- set payload Student ID {weight , height , bmi} of firebase <b>meaning real-time</b> <br>
+- push json history payload {weight , height , bmi} with Etag timestamp (yyyy-mm-dd'T'hh:mm:ss) <b>meaning history</b><br>
 ### Select mode <br>
 - before select mode show welcome page<br>
 - show select mode page <br>
@@ -33,19 +33,23 @@
  > - if input > ID : can't input and process <br>
  > - if input != int : can't input process 
 - show detail page user
-- show weight {2 time to success} + push weight to firebase 
- > - no weight in 30 sec power off lcd and reset system
+- show weight {2 time to success} 
+ > - no weight in 30 sec back to select mode
 - height with input by keypad + push to height firebase  
+ > - input can reset everytime
  > - if input > height (lock hundred point) : can't input and process 
  > - if input != int : can't input and process
-- show results BMI with image  + push BMI to firebase 
+- show results BMI with image 
+- set realtime , push history payload {weight , height , bmi} to firebase
 - in 30 sec back to select mode
 ### Offline
-- show weight \{2 time to success\} + push weight to firebase (no weight in 30 sec power off lcd and reset system)
-- height with input by keypad + push to height firebase  
+- show weight {2 time to success}
+> - no weight in 30 sec back to select mode
+- height with input by keypad 
+ > - input can reset everytime
  > - if input > height (lock hundred point) : can't input and process 
  > - if input != int : can't input and process
-- show results BMI with image  + push BMI to firebase 
+- show results BMI with image 
 - in 30 sec back to select mode
 
 ###### Last Commit : 251062 
