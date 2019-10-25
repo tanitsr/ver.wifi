@@ -558,19 +558,23 @@ void display_phonenumbertofirebase(){
           while(true){
           char keypressed = myKeypad.getKey();  
             if (keypressed != NO_KEY && phonenum.length() < 5){
-                if(keypressed == 'A'){
-                    phonenum = "";
-                    tft.clear();
-                    put_phonenum();               
-               }else{
                     phonenum += keypressed;
                     tft.setFont(Terminal11x16);        
                     tft.drawText(50, 70, phonenum);
                     Serial.print("size : ");
-                    Serial.println(phonenum.length());    
+                    Serial.println(phonenum.length());
+              if (keypressed == 'A'){
+                    phonenum = "";
+                    tft.clear();
+                    put_phonenum();
+              }     
             } 
-          }
-        else if(keypressed == '#' && phonenum.length() == 5){
+            else if(keypressed == 'A'){
+                    phonenum = "";
+                    tft.clear();
+                    put_phonenum();
+            }         
+            else if(keypressed == '#' && phonenum.length() == 5){
             tft.clear();
             for(int i =0;i<=5;i++){
               if(phonenum[i] == 'B' || phonenum[i] == 'C' || phonenum[i] == 'D' || phonenum[i] == '*' || phonenum[i] == '#'){
@@ -632,14 +636,19 @@ void display_getuser()
   tft.setFont(Terminal6x8);
   tft.drawText(164, 1, "Online");   
   tft.setFont(Terminal11x16);
-  tft.drawBitmap(20, 50, get_user, 60, 57,COLOR_WHITE);
-  tft.drawText(100, 30, "Name :");
-  tft.drawText(100, 60, "Age :");
-  tft.drawText(160, 30, uname);
-  tft.drawText(160, 60, uage);
-  tft.drawText(160, 90, l_weight);
-  tft.drawText(160, 120, l_height);
-  tft.drawText(160, 150, l_bmi);
+  tft.drawBitmap(5, 20, get_user, 60, 57,COLOR_WHITE);
+  tft.drawText(75, 30, "Name ");
+  tft.drawText(75, 60, "Age ");
+  tft.drawText(20, 90, "Weight ");
+  tft.drawText(20, 120, "Height ");
+  tft.drawText(20, 150, "BMI ");
+  tft.drawText(125, 30, uname);
+  tft.drawText(125, 60, uage);
+  tft.drawText(110, 90, l_weight);
+  tft.drawText(185, 90, "kg");
+  tft.drawText(110, 120, l_height);
+  tft.drawText(185, 120, "cm");
+  tft.drawText(110, 150, l_bmi);
   delay(8000);
   return;   
  }
