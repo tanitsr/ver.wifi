@@ -12,8 +12,8 @@
 - get welcome page<br>
 - get select mode page + function select mode<br>
 - get payload Student ID form firebase<br>
-- set payload Student ID {weight , height , bmi} of firebase <b>meaning real-time</b> <br>
-- push json history payload {weight , height , bmi} with Etag timestamp (yyyy-mm-dd'T'hh:mm:ss) <b>meaning history</b><br>
+- set payload Student ID {weight , height , bmi} of firebase <b>"meaning real-time"</b> <br>
+- push json history payload {weight , height , bmi} with Etag timestamp (yyyy-mm-dd'T'hh:mm:ss) <b>"meaning history"</b><br>
 ### Select mode <br>
 - before select mode show welcome page<br>
 - show select mode page <br>
