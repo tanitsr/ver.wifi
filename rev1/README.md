@@ -40,7 +40,7 @@
  > - if input > height (lock hundred point) : can't input and process 
  > - if input != int : can't input and process
 - show results BMI with image 
-- set realtime , push history payload {weight , height , bmi} to firebase
+- set real-time , push history payload {weight , height , bmi} to firebase
 - in 30 sec back to select mode
 ### Offline
 - show weight {2 time to success}
