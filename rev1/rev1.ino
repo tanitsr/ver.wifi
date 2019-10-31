@@ -689,7 +689,7 @@ void put_tofirebase(String sw , int sh , float sb)
     }   
 }    
 
-void display_showbmi(int sumshow,String strsum)
+void display_showbmi(float sumshow,String strsum)
 {
   if(sumshow <= 18.5)
   {
@@ -707,7 +707,7 @@ void display_showbmi(int sumshow,String strsum)
     tft.drawBitmap(20, 40, normal, 80, 90,COLOR_GREEN);   
     tft.drawText(30, 145, "Healthy");   
   }
-  else if(sumshow > 23 && sumshow <= 29.9)
+  else if(sumshow >= 23 && sumshow <= 29.9)
   {
     tft.setFont(Terminal11x16);
     tft.drawText(140, 60, "BMI");
@@ -1051,7 +1051,7 @@ void loop() {
     weight = scale.get_units();  
     Serial.println(weight);
     Serial.println(led);
-    if(weight > 10 && led == false && weight < 200){
+    if(weight > 20 && led == false && weight < 200){
       Serial.println("A");  
       weight = 0.0; //set load cell
       if(led == false){
