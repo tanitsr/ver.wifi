@@ -1,3 +1,4 @@
+////NTP Server mon + 1
 #include <WiFiManager.h> // https://github.com/tzapu/WiFiManager
 #include "SPI.h"
 #include "TFT_22_ILI9225.h"
@@ -665,7 +666,7 @@ void put_tofirebase(String sw , int sh , float sb)
   String path_realtime = "/User/"+phonenum;
   getLocalTime(&timeinfo);
   String timeStamp = +"/"+String(timeinfo.tm_year+1900) +"-"
-  + String(timeinfo.tm_mon) +"-"+ String(timeinfo.tm_mday) +"\'T\'"
+  + String(timeinfo.tm_mon+1) +"-"+ String(timeinfo.tm_mday) +"\'T\'"
   + String(timeinfo.tm_hour) +":"+ String(timeinfo.tm_min) +":"+ String(timeinfo.tm_sec); 
     if (Firebase.updateNode(firebaseData, path_history + timeStamp, json))
     {
