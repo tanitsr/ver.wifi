@@ -7,7 +7,7 @@
 #include "FirebaseESP32.h"
 #include "HX711.h"
 #include <EEPROM.h>
-
+#include "time.h"
 ////////ili9925_define//////////
 #define TFT_RST 17  // IO 26
 #define TFT_RS  16  // IO 25
@@ -316,7 +316,7 @@ static const uint8_t PROGMEM obese[] =
 ///firebase_define//////
 #define FIREBASE_HOST "https://test-mainproject-2df90.firebaseio.com" //Do not include https:// in FIREBASE_HOST
 #define FIREBASE_AUTH "6LrHrZjSkYt9CXYEDIPbk6e8nHmpDIQ9rbSuynZ6"
-
+FirebaseJson json;
 ////////hx711_define//////////
 #define DOUT  21  
 #define CLK  22
@@ -349,6 +349,8 @@ String read_wifi_name = "";
 String read_wifi_pass = "";
 String wifi_name = "";
 String wifi_pass = "";
+struct tm timeinfo;
+
 
 String convertFloatToString(float f)
 {
@@ -365,6 +367,42 @@ void writeUsertoEEPROM()
   }
   EEPROM.write(wifi_name.length(),'\0');
   EEPROM.commit();
+}
+
+
+void put_tofirebase(String sw , int sh , float sb)
+{
+  FirebaseData firebaseData;
+  Firebase.begin(FIREBASE_HOST, FIREBASE_AUTH); 
+  Firebase.reconnectWiFi(true);
+  bool goNext = false;
+  json.clear().addDouble("weight",sw.toFloat()).addDouble("height",sh).addDouble("bmi",sb);
+  String path_history = "/History/08123/";
+  String path_realtime = "/User/08123";
+  getLocalTime(&timeinfo);
+  String timeStamp = +"/"+String(timeinfo.tm_year+1900) +"-"
+  + String(timeinfo.tm_mon+1) +"-"+ String(timeinfo.tm_mday) +"\'T\'"
+  + String(timeinfo.tm_hour) +":"+ String(timeinfo.tm_min) +":"+ String(timeinfo.tm_sec); 
+    if (Firebase.updateNode(firebaseData, path_history + timeStamp, json))
+    {
+      if (firebaseData.dataType() == "json")
+        Serial.println("Nice");
+        goNext = true;        
+    }
+    else
+    {
+      Serial.println("FAILED");
+      Serial.println("REASON: " + firebaseData.errorReason());
+      Serial.println("------------------------------------");
+      Serial.println();
+    }
+    if(goNext == true){
+      Firebase.setFloat(firebaseData, path_realtime + "/l_weight", sw.toFloat());
+      Firebase.setFloat(firebaseData, path_realtime + "/l_height", sh);
+      Firebase.setFloat(firebaseData, path_realtime + "/l_bmi", sb);
+      Serial.println("SET!!");
+      return;
+    }   
 }
 
 void writePasstoEEPROM()
@@ -498,7 +536,7 @@ void display_first(){
 
 void selectmode(){
     while(true){
-    char keypressed = myKeypad.getKey();
+    char keypressed = 'A';
     unsigned long showTime = millis();
     if(set_tomills == 0){
       previousTime = showTime;
@@ -641,21 +679,6 @@ void display_getuser()
  }
 }
 
-void put_tofirebase()
-{
-  FirebaseData firebaseData;
-  Firebase.begin(FIREBASE_HOST, FIREBASE_AUTH); 
-  Firebase.reconnectWiFi(true);   
-  String path_to_weight = "/User/"+phonenum+"/weight";
-   if (Firebase.setInt(firebaseData, path_to_weight , sent_wei))
-    {
-      if (firebaseData.dataType() == "float")
-        Serial.println(firebaseData.floatData(), 5);
-        phonenum = "";
-        return;
-    }
-   
-}
 
 void display_showbmi(int sumshow,String strsum)
 {
@@ -751,7 +774,7 @@ void passtobmiShow(){
       display_showbmi(sum,sum_ss);
       if(sw_to == 1)
       {
-       put_tofirebase(); 
+       put_tofirebase("20",30,40); 
       }      
       for(int i = 0;i<30;i++){
         Serial.print("i : ");
@@ -873,6 +896,7 @@ void display_weight()
             state = 1;
             count_loop = 0;
           }
+        put_tofirebase("20",30,40);  
         Serial.print("weight : ");
         Serial.println(weight);
         Serial.print("state : ");
@@ -1005,7 +1029,8 @@ void setup() {
     readPasstoEEPROM();
     Serial.println(read_wifi_name);
     Serial.println(read_wifi_pass);
-    WiFi.begin(read_wifi_name.c_str(),read_wifi_pass.c_str()); 
+    WiFi.begin(read_wifi_name.c_str(),read_wifi_pass.c_str());
+    configTime(25200, 0, "ntp.ku.ac.th", "fw.eng.ku.ac.th", "time.uni.net.th"); 
 }
 void loop() {
     Serial.println("input weight_main_loop");  
@@ -1016,7 +1041,8 @@ void loop() {
       Serial.println("A");  
       weight = 0.0; //set load cell
       if(led == false){
-        Serial.println("B");  
+        Serial.println("B");
+         put_tofirebase("20",30,40);   
          start_led();
          display_first();
          selectmode();
