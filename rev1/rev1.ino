@@ -1,4 +1,6 @@
 #include <WiFiManager.h> // https://github.com/tzapu/WiFiManager
+#include "WiFiUdp.h"
+#include "NTP.h"
 #include "SPI.h"
 #include "TFT_22_ILI9225.h"
 #include <Keypad.h>
@@ -6,8 +8,10 @@
 #include "HX711.h"
 #include <EEPROM.h>
 #include "time.h"
+
 ////ntp_define///
-#define TIMEZONE 7
+WiFiUDP wifiUdp;
+NTP ntp(wifiUdp);
 
 ////////ili9925_define//////////
 #define TFT_RST 17  // IO 26
@@ -351,7 +355,8 @@ String read_wifi_name = "";
 String read_wifi_pass = "";
 String wifi_name = "";
 String wifi_pass = "";
-struct tm timeinfo;
+String timeStamp = "";
+//struct tm timeinfo;
 
 
 String convertFloatToString(float f)
@@ -359,6 +364,16 @@ String convertFloatToString(float f)
   String s = String(f,1);
   return s;
 }
+
+void getDateFromNTP()
+{
+  ntp.begin();
+  ntp.timeZone(7,0);
+  ntp.ntpUpdate();
+  timeStamp = String(ntp.year()) + "-" + String(ntp.month()) + "-" + String(ntp.day()) + "'T'"
+  + String(ntp.hours()) +":"+ String(ntp.minutes()) +":"+ String(ntp.seconds());   
+}
+
 
 
 void writeUsertoEEPROM()
@@ -663,10 +678,12 @@ void put_tofirebase(String sw , int sh , float sb)
   json.clear().addDouble("weight",sw.toFloat()).addDouble("height",sh).addDouble("bmi",sb);
   String path_history = "/History/"+phonenum+"/";
   String path_realtime = "/User/"+phonenum;
-  getLocalTime(&timeinfo);
-  String timeStamp = +"/"+String(timeinfo.tm_year+1900) +"-"
-  + String(timeinfo.tm_mon) +"-"+ String(timeinfo.tm_mday) +"\'T\'"
-  + String(timeinfo.tm_hour) +":"+ String(timeinfo.tm_min) +":"+ String(timeinfo.tm_sec); 
+  getDateFromNTP();
+  Serial.println(timeStamp);
+  //getLocalTime(&timeinfo);
+  //String timeStamp = +"/"+String(timeinfo.tm_year+1900) +"-"
+  //+ String(timeinfo.tm_mon) +"-"+ String(timeinfo.tm_mday) +"\'T\'"
+  //+ String(timeinfo.tm_hour) +":"+ String(timeinfo.tm_min) +":"+ String(timeinfo.tm_sec); 
     if (Firebase.updateNode(firebaseData, path_history + timeStamp, json))
     {
       if (firebaseData.dataType() == "json")
@@ -1044,7 +1061,7 @@ void setup() {
     Serial.println(read_wifi_name);
     Serial.println(read_wifi_pass);
     WiFi.begin(read_wifi_name.c_str(),read_wifi_pass.c_str());
-    configTime(25200, 0, "ntp.ku.ac.th", "fw.eng.ku.ac.th", "time.uni.net.th"); 
+    //configTime(25200, 0, "ntp.ku.ac.th", "fw.eng.ku.ac.th", "time.uni.net.th"); 
 }
 void loop() {
     Serial.println("input weight_main_loop");  
