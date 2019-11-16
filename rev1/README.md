@@ -1,4 +1,4 @@
-# **Check Point [Last : 311062]**
+# **Check Point [Last : 161162]**
 ## Setup <br>
 - set all pin (load cell + lcd + relay + keypad) <br>
 - set W / R EEPROM <br>
@@ -6,6 +6,7 @@
 - set relay <br>
 - calibration load call {4 load} <br>
 - set firebase auth <br>
+- set get date from NTP Server when sent payload to firebase <br>
 ### Pin Define
 - TFT 2.2" ili9925 LCD
 > - RST 17
@@ -35,7 +36,8 @@
 - get select mode page + function select mode<br>
 - get payload Student ID form firebase<br>
 - set payload Student ID {weight , height , bmi} of firebase <b>"meaning real-time"</b> <br>
-- push json history payload {weight , height , bmi} with Etag timestamp (yyyy-mm-dd'T'hh:mm:ss) <b>"meaning history"</b><br>
+- get date from NTP Server when push json history <b>ONLY!</b> <br>
+- push json history payload {weight , height , bmi} with Etag timestamp (yyyy-mm-dd'T'hh:mm:ss) from NTP Server <b>"meaning history"</b><br>
 ### Select mode <br>
 - before select mode show welcome page<br>
 - show select mode page <br>
@@ -82,4 +84,4 @@
 > - bmi > 29.9 {obese}
 - in 30 sec back to select mode
 
-###### Last Commit : 311062 
+###### Last Commit : 161162
