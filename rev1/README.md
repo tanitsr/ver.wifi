@@ -1,4 +1,4 @@
-# **Check Point [Last : 161162]**
+# **Check Point [Last : 161262]**
 ## Setup <br>
 - set all pin (load cell + lcd + relay + keypad) <br>
 - set W / R EEPROM <br>
